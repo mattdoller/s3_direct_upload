@@ -14,18 +14,32 @@ Add this line to your application's Gemfile:
 
     gem 's3_direct_upload'
 
-Then add a new initalizer with your AWS credentials:
+Then add a new initializer with your AWS credentials:
 
 **config/initializers/s3_direct_upload.rb**
 ```ruby
 S3DirectUpload.config do |c|
-  c.access_key_id = ""       # your access key id
-  c.secret_access_key = ""   # your secret access key
   c.bucket = ""              # your bucket name
   c.region = nil             # region prefix of your bucket url. This is _required_ for the non-default AWS region, eg. "s3-eu-west-1"
   c.url = nil                # S3 API endpoint (optional), eg. "https://#{c.bucket}.s3.amazonaws.com/"
 end
 ```
+
+By default, the S3DirectUpload module will use the values in the
+`ENV['AWS_ACCESS_KEY_ID']` and `ENV['AWS_SECRET_ACCESS_KEY']` environment
+variables when looking for the appropriate access key and secrets.  In scenarios
+where it may not be feasible to use static values, you may instead set a lambda
+function which can provide the vars instead:
+
+```ruby
+  S3DirectUpload.config do |config|
+    config.credentials_callback = -> () { Aws::SharedCredentials.new.credentials }
+    ...
+  end
+```
+
+The `credentials_callback` lambda should return an object that responds to methods
+named `access_key_id` and `secret_access_key`.
 
 Make sure your AWS S3 CORS settings for your bucket look something like this:
 ```xml
