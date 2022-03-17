@@ -13,10 +13,16 @@ describe S3DirectUpload::Config do
     end
   end
 
+  describe '#credentials_callback' do
+    it 'is nil by default' do
+      expect(S3DirectUpload.config.credentials_callback).to be_nil
+    end
+  end
+
   describe '#access_key_id' do
     context 'when the credentials_callback is nil' do
       it 'returns the ENV["AWS_ACCESS_KEY_ID"] value' do
-        S3DirectUpload.config.access_key_id.should == 'access-key-id'
+        expect(S3DirectUpload.config.access_key_id).to eql('access-key-id');
       end
     end
 
@@ -26,7 +32,7 @@ describe S3DirectUpload::Config do
 
         S3DirectUpload.config.credentials_callback = -> () { credentials }
 
-        S3DirectUpload.config.access_key_id.should == 'callback-access-key-id'
+        expect(S3DirectUpload.config.access_key_id).to eql('callback-access-key-id');
       end
     end
   end
@@ -34,7 +40,7 @@ describe S3DirectUpload::Config do
   describe '#secret_access_key' do
     context 'when the credentials_callback is nil' do
       it 'returns the ENV["AWS_SECRET_ACCESS_KEY"] value' do
-        S3DirectUpload.config.secret_access_key.should == 'secret-access-key'
+        expect(S3DirectUpload.config.secret_access_key).to eql('secret-access-key');
       end
     end
 
@@ -44,7 +50,7 @@ describe S3DirectUpload::Config do
 
         S3DirectUpload.config.credentials_callback = -> () { credentials }
 
-        S3DirectUpload.config.secret_access_key.should == 'callback-secret-access-key'
+        expect(S3DirectUpload.config.secret_access_key).to eql('callback-secret-access-key');
       end
     end
   end
